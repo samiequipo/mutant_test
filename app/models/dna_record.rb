@@ -1,7 +1,12 @@
 class DnaRecord < ApplicationRecord
   validates :dna_sequence, presence: true
+  validate :dna_sequence_has_valid_format, if: :dna_sequence_is_array
   # , format: { with: /\A[a]*\z/ }
   # validates :dna_sequence_is_array
+
+  # 1) Uniq and case sensitive -> test model
+  # 2) should be (A,T,C,G) -> test model
+  # 3) Test Controller
   
   # Scope
   scope :count_mutant_dna, -> { where(mutant: true).count }
@@ -121,11 +126,40 @@ class DnaRecord < ApplicationRecord
     sequence_counter
   end
 
-  def dna_sequence_is_array
-    errors.add(:dna_sequence, "must be an array") unless dna_sequence.kind_of?(Array)
+  # Optional method to know << How many mutant sequences are there? >>
+  def counter_sequence
+    sequence_number = 
+      horizontal_sequence(self.dna_sequence) + 
+      vertical_sequence(self.dna_sequence) + 
+      oblique_sequence(self.dna_sequence)
+    
+    sequence_number
   end
 
   private
+    # Custom method validate
+    def dna_sequence_is_array
+      if !self.dna_sequence.is_a?(Array)
+        errors.add(:dna_sequence, "must be an array")
+        
+        return false
+      else
+        true
+      end
+    end
+
+    def dna_sequence_has_valid_format
+      dna_sequence_length = self.dna_sequence.map { |num| num.length }.uniq
+  
+      if !dna_sequence_length.one? || dna_sequence_length.first != self.dna_sequence.length
+        errors.add(:dna_sequence, "should be a size NxN")
+      end
+      
+      if (dna_sequence_length.first || self.dna_sequence.length) < 4
+        errors.add(:dna_sequence, "should be a size min 4x4")
+      end
+    end
+    
     # dna_sequence.split('')[row..row+3] => ["A", "G", "A", "A"] uniq => ["A", "G", "A", "A"]
     # dna_sequence.uniq.one? => false
     # dna_sequence.split('')[row..row+3] => ["A", "A", "A", "A"] uniq => ["A"]

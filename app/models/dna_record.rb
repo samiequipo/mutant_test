@@ -1,17 +1,14 @@
 class DnaRecord < ApplicationRecord
-  validates :dna_sequence, presence: true
+  validates :dna_sequence, presence: true, uniqueness: { case_sensitive: false }
   validate :dna_sequence_has_valid_format, if: :dna_sequence_is_array
-  # , format: { with: /\A[a]*\z/ }
-  # validates :dna_sequence_is_array
-
-  # 1) Uniq and case sensitive -> test model
-  # 2) should be (A,T,C,G) -> test model
-  # 3) Test Controller
   
   # Scope
   scope :count_mutant_dna, -> { where(mutant: true).count }
   scope :count_human_dna, -> { where(mutant: false).count }
   
+  # Call horizonta, vertical and oblique methods and give back number
+  # according to the dna coincidences, sum the result, then if sequence_number 
+  # is more 1 return true, else return false 
   def is_mutant?
     sequence_number = 
       horizontal_sequence(self.dna_sequence) + 
@@ -137,13 +134,14 @@ class DnaRecord < ApplicationRecord
   end
 
   private
-    # Custom method validate
+    ### Custom method validate ###
     def dna_sequence_is_array
       if !self.dna_sequence.is_a?(Array)
         errors.add(:dna_sequence, "must be an array")
         
         return false
       else
+        
         true
       end
     end
@@ -158,7 +156,16 @@ class DnaRecord < ApplicationRecord
       if (dna_sequence_length.first || self.dna_sequence.length) < 4
         errors.add(:dna_sequence, "should be a size min 4x4")
       end
+
+      self.dna_sequence.map do |dna_sequence_word|
+        if !dna_sequence_word.match?(/\A[ATGC]+\z/)
+          errors.add(:dna_sequence, "should only contain characters A,C,T or/and G")
+          
+          break
+        end
+      end
     end
+    ### Finally Custom method validate ###
     
     # dna_sequence.split('')[row..row+3] => ["A", "G", "A", "A"] uniq => ["A", "G", "A", "A"]
     # dna_sequence.uniq.one? => false

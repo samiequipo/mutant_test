@@ -7,7 +7,11 @@
 one: {
   dna_sequence: ["ATGCGA","CAGTGC","TTATGT","AGAAGG","CCCCTA","TCACTG"]
 }
-# column: value
-#
-two: {}
-# column: value
+
+invalid_1: {
+  dna_sequence: ["ATC","CAGT","AG","A","TCAC"]
+}
+
+invalid_2: {
+  dna_sequence: "ACTG"
+}

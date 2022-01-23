@@ -1,5 +1,5 @@
 class Api::V1::DnaRecordController < ApplicationController
-  
+
   # Human is a mutant?
   # params[dna_sequence], user send your dna_sequence
   # params[mutant], boolean, true if user is a mutant, false if not
@@ -19,9 +19,9 @@ class Api::V1::DnaRecordController < ApplicationController
       dna_record.save
       
       if dna_record.mutant 
-        render json: dna_record, status: 200 
+        render status: 200 
       else
-        render json: dna_record, status: 403
+        render status: 403
       end
     else
       render json: dna_record.errors, status: 400
@@ -44,18 +44,13 @@ class Api::V1::DnaRecordController < ApplicationController
                   }
   end
 
-  # Optional method to know << How many mutant sequences are there? >>
+  # OPTIONAL method to know << How many mutant sequences are there? >>
   # POST /api/v1/counter
   def counter_sequence
     dna_record = DnaRecord.new(dna_sequence: params[:dna_sequence])
-    
-    if dna_record.valid?
-      number_dna_sequence = dna_record.counter_sequence 
+    number_dna_sequence = dna_record.counter_sequence 
       
-      render json: { number_dna_sequence: number_dna_sequence }, status: 200 
-    else
-      render json: dna_record.errors, status: 400
-    end
+    render json: { number_dna_sequence: number_dna_sequence }, status: 200 
   end
 
   private

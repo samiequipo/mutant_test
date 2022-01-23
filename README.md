@@ -1,24 +1,51 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+# 1) In port http 3000 - http://localhost:3000
 
-Things you may want to cover:
+# 1.1) Request /mutant
+# - Indicates if the person is a mutant or not, returning status 200 or 403 depending on the case 
+POST http://localhost:3000/api/v1/mutant
 
-* Ruby version
+# - Place the following NxN object in the request:
 
-* System dependencies
+{
+  dna_sequence: ["ATGCGA","CAGTGC","TTATGT","AGAAGG","CCCCTA","TCACTG"]
+}
 
-* Configuration
+# 1.2) Request /stats
+# - Statistics between the number of mutants, number of humans and ratio
+GET http://localhost:3000/api/v1/stats
 
-* Database creation
+# 1.3) Request /counter - Optional *
+# - know how many matches exist in an NxN array
+POST http://localhost:3000/api/v1/counter
+# - Place the following NxN object in the request:
 
-* Database initialization
+{
+  dna_sequence: ["ATGCGA","CAGTGC","TTATGT","AGAAGG","CCCCTA","TCACTG"]
+}
 
-* How to run the test suite
+# 2) In herokuapp - https://mutant-test.herokuapp.com/
 
-* Services (job queues, cache servers, search engines, etc.)
+# 2.1) Request /mutant
+# - Indicates if the person is a mutant or not, returning status 200 or 403 depending on the case 
+POST https://mutant-test.herokuapp.com/api/v1/mutant
 
-* Deployment instructions
+# - Place the following NxN object in the request:
 
-* ...
+{
+  dna_sequence: ["ATGCGA","CAGTGC","TTATGT","AGAAGG","CCCCTA","TCACTG"]
+}
+
+# 2.2) Request /stats
+# - Statistics between the number of mutants, number of humans and ratio
+GET https://mutant-test.herokuapp.com/api/v1/stats
+
+# 2.3) Request /counter - Optional *
+# - know how many matches exist in an NxN array
+POST https://mutant-test.herokuapp.com/api/v1/counter
+# - Place the following NxN object in the request:
+
+{
+  dna_sequence: ["ATGCGA","CAGTGC","TTATGT","AGAAGG","CCCCTA","TCACTG"]
+}
